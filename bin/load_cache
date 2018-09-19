@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cache="${1}"
+destination="${2}"
+
+mkdir -p ${cache}
+
+if rsync -aHl "${cache}/" "${destination}/" >/dev/null 2>&1
+then
+  echo "Applied previously saved cache"
+else
+  echo "Could not apply cache, moving ahead without it" 1>&2
+fi
+
+exit 0

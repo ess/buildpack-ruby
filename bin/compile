@@ -1,0 +1,17 @@
+#!/bin/bash
+
+build_directory="${1}"
+cache_directory="${2}"
+script_dir=$(dirname "${BASH_SOURCE}")
+
+cd "${build_directory}"
+
+echo "Loading cached items ..." &&
+  "${script_dir}/load_cache" "${cache_directory}" "${build_directory}" &&
+  echo "Bundling dependencies ..." &&
+  stdbuf -oL bundle install --deployment --without test,development &&
+  echo "Precompiling assets ..." &&
+  stdbuf -oL bundle exec rake assets:precompile &&
+  echo "Caching" &&
+  "${script_dir}/save_cache" "${cache_directory}" "${build_directory}" .bundle vendor/bundle &&
+  echo "Done"

@@ -1,0 +1,35 @@
+#!/bin/bash
+
+destination="${1}"
+base="${2}"
+
+shift 2
+
+mkdir -p "${destination}"
+
+for location in $@
+do
+  absolute="${base}/${location}"
+  target="${destination}/${location}"
+
+  if [ -e "${absolute}" ]
+  then
+    if [ -d "${absolute}" ]
+    then
+      mkdir -p "${target}" &&
+        rsync -aHl "${absolute}/" "${target}/" >/dev/null 2>&1 &&
+        echo "Cached ${location}"
+    elif [ -f "${absolute}" ]
+    then
+      mkdir -p "$(dirname "${target}")" &&
+        cp -f -p "${absolute}" "${target}" &&
+        echo "Cached ${location}"
+    else
+      echo "Don't know how to cache ${location} (skipping)" 1>&2
+    fi
+  else
+    echo "${absolute} does not exist (skipping)" 1>&2
+  fi
+done
+
+exit 0

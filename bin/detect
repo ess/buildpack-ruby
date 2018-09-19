@@ -1,0 +1,5 @@
+#!/bin/bash
+
+[ -f "${1}/Gemfile" ] && echo "ruby" && exit 0
+
+exit 1
